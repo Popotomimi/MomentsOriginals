@@ -4,6 +4,7 @@ import { Moment } from '../../../Moment';
 import { environment } from '../../../../environments/environment.development';
 import { format, parseISO, isValid } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,9 @@ export class HomeComponent implements OnInit {
   allMoments: Moment[] = [];
   moments: Moment[] = [];
   baseApiUrl = environment.baseApiUrl;
+
+  faSearch = faSearch;
+  searchTerm: string = "";
 
   constructor(private momentService: MomentService) {}
 
@@ -42,5 +46,14 @@ export class HomeComponent implements OnInit {
         console.error('Erro ao buscar momentos:', error);
       }
     );
+  }
+
+  search(e: Event): void {
+    const target = e.target as HTMLInputElement
+    const value = target.value
+
+    this.moments = this.allMoments.filter(moment => {
+      return moment.title.toLowerCase().includes(value)
+    })
   }
 }
