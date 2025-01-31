@@ -10,7 +10,7 @@
   </div>
   <div class="actions">
     <h3>Ações:</h3>
-    <a class="edit-btn" href="/moments/edit/{{ moment.id }}">
+    <a class="edit-btn" routerLink="/moments/edit/{{ moment.id }}">
       <fa-icon [icon]="faEdit"></fa-icon> Editar
     </a>
     <button class="remove-btn" (click)="removeHandler(moment.id!)">
@@ -20,6 +20,55 @@
   </div>
   <!-- Comentários -->
   <div class="comments">
-    <h3>Comentários (0):</h3>
+    <h3>
+      Comentários ({{
+        moment.comments!.length > 0 ? moment.comments!.length : 0
+      }}):
+    </h3>
+    <div *ngIf="moment.comments!.length > 0; else noComments">
+      <div class="comment-container" *ngFor="let comment of moment.comments">
+        <p class="comment">{{ comment.text }}</p>
+        <p class="author"><span>por:</span> {{ comment.username }}</p>
+      </div>
+    </div>
+    <ng-template #noComments>
+      <p>Não há comentários</p>
+    </ng-template>
+  </div>
+  <div class="comment-form">
+    <h3>Deixe um comentário:</h3>
+    <form
+      [formGroup]="commentForm"
+      #formDir="ngForm"
+      (ngSubmit)="onSubmit(formDir)"
+    >
+      <div class="form-group">
+        <label for="text">Comentário:</label>
+        <textarea
+          formControlName="text"
+          placeholder="Oque você quer comentar?"
+          required
+        ></textarea>
+        <div *ngIf="text.invalid && formDir.submitted" class="validation-error">
+          <p *ngIf="text.errors?.['required']">O texto é obrigatório</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="username">Nome:</label>
+        <input
+          formControlName="username"
+          type="text"
+          placeholder="Digite o seu nome"
+          required
+        />
+        <div
+          *ngIf="username.invalid && formDir.submitted"
+          class="validation-error"
+        >
+          <p *ngIf="username.errors?.['required']">O nome é obrigatório</p>
+        </div>
+      </div>
+      <input type="submit" value="Comentar" />
+    </form>
   </div>
 </div>
